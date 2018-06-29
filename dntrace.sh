@@ -42,40 +42,40 @@ END
 }
 
 function destroy {
-    sudo lttng stop $session
-    sudo lttng destroy $session
+    lttng stop $session
+    lttng destroy $session
     exit
 }
 
 function record {
-    sudo lttng create $session --live
-    sudo lttng enable-channel --tracefile-size 1M --tracefile-count 5 -u chan
+    lttng create $session --live
+    lttng enable-channel --tracefile-size 1M --tracefile-count 5 -u chan
 
     if (( opt_pid )); then
-        sudo lttng track --userspace --session $session --pid $pid
+        lttng track --userspace --session $session --pid $pid
     fi
 
-    sudo lttng add-context --userspace --type vpid -c chan
-    sudo lttng add-context --userspace --type vtid -c chan
-    sudo lttng add-context --userspace --type procname -c chan
+    lttng add-context --userspace --type vpid -c chan
+    lttng add-context --userspace --type vtid -c chan
+    lttng add-context --userspace --type procname -c chan
 
     if (( gc_enabled )); then
-        sudo lttng enable-event --userspace -c chan --tracepoint DotNETRuntime:GCStart*
-        sudo lttng enable-event --userspace -c chan --tracepoint DotNETRuntime:GCEnd*
-        sudo lttng enable-event --userspace -c chan --tracepoint DotNETRuntime:GCTriggered
+        lttng enable-event --userspace -c chan --tracepoint DotNETRuntime:GCStart*
+        lttng enable-event --userspace -c chan --tracepoint DotNETRuntime:GCEnd*
+        lttng enable-event --userspace -c chan --tracepoint DotNETRuntime:GCTriggered
     fi
     if (( heap_enabled )); then
-        sudo lttng enable-event --userspace -c chan --tracepoint DotNETRuntime:GCHeapStats*
+        lttng enable-event --userspace -c chan --tracepoint DotNETRuntime:GCHeapStats*
     fi
     if (( alloc_enabled )); then
-        sudo lttng enable-event --userspace -c chan --tracepoint \
+        lttng enable-event --userspace -c chan --tracepoint \
                                 DotNETRuntime:GCAllocationTick*
     fi
     if (( exc_enabled )); then
-        sudo lttng enable-event --userspace -c chan --tracepoint DotNETRuntime:Exception*
+        lttng enable-event --userspace -c chan --tracepoint DotNETRuntime:Exception*
     fi
 
-    sudo lttng start $session
+    lttng start $session
 }
 
 function view {
